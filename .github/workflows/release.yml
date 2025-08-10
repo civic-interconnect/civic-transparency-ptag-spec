@@ -1,0 +1,58 @@
+name: CT Spec Release (PyPI + versioned docs)
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+  id-token: write  # required for PyPI Trusted Publishing
+  pages: write     # for GH Pages via mike
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build deps
+        run: |
+          pip install --upgrade pip
+          pip install build
+
+      # If your package includes JSON schemas, be sure they’re in the sdist/wheel.
+      # This assumes MANIFEST.in and pyproject are configured (see notes below).
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  docs:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install MkDocs + Mike
+        run: pip install -r requirements.txt
+      - name: Deploy versioned docs with Mike
+        env:
+          TAG: ${{ github.ref_name }}         # e.g., v0.4.0
+        run: |
+          # Use the tag as the docs version; also update 'latest' alias
+          mike deploy --push --update-aliases latest "$TAG"

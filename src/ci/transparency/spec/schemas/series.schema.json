@@ -1,0 +1,67 @@
+{
+  "$id": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/series.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SeriesDoc",
+  "type": "object",
+  "required": ["topic", "generated_at", "interval", "points"],
+  "properties": {
+    "topic": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "interval": { "type": "string", "enum": ["minute"] },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ts",
+          "volume",
+          "reshare_ratio",
+          "recycled_content_rate",
+          "acct_age_mix",
+          "automation_mix",
+          "client_mix",
+          "coordination_signals"
+        ],
+        "properties": {
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC minute boundary"
+          },
+          "volume": { "type": "integer", "minimum": 0 },
+          "reshare_ratio": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "recycled_content_rate": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+
+          "acct_age_mix": {
+            "type": "object",
+            "propertyNames": { "$ref": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/provenance_tag.schema.json#/$defs/AcctAge" },
+            "additionalProperties": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+          },
+          "automation_mix": {
+            "type": "object",
+            "propertyNames": { "$ref": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/provenance_tag.schema.json#/$defs/AutomationFlag" },
+            "additionalProperties": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+          },
+          "client_mix": {
+            "type": "object",
+            "propertyNames": { "$ref": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/provenance_tag.schema.json#/$defs/ClientFamily" },
+            "additionalProperties": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+          },
+
+          "coordination_signals": {
+            "type": "object",
+            "required": ["burst_score", "synchrony_index", "duplication_clusters"],
+            "properties": {
+              "burst_score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+              "synchrony_index": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+              "duplication_clusters": { "type": "integer", "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

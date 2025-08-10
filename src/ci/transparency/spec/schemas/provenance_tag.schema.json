@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/provenance_tag.schema.json",
+  "title": "Provenance Tag",
+  "description": "Schema for per-post provenance tags in the Civic Transparency standard. All values are bucketed or categorical — no PII.",
+  "$defs": {
+    "AcctAge": { "enum": ["0-7d", "8-30d", "1-6m", "6-24m", "24m+"] },
+    "AcctType": { "enum": ["person", "org", "media", "public_official", "unverified", "declared_automation"] },
+    "AutomationFlag": { "enum": ["manual", "scheduled", "api_client", "declared_bot"] },
+    "PostKind": { "enum": ["original", "reshare", "quote", "reply"] },
+    "ClientFamily": { "enum": ["web", "mobile", "third_party_api"] }
+  },
+  "type": "object",
+  "properties": {
+    "acct_age_bucket": {
+      "description": "Broad range representing the account’s creation date relative to the post time.",
+      "allOf": [{ "$ref": "#/$defs/AcctAge" }]
+    },
+    "acct_type": {
+      "description": "Declared account type.",
+      "allOf": [{ "$ref": "#/$defs/AcctType" }]
+    },
+    "automation_flag": {
+      "description": "Indicates the automation status or posting method.",
+      "allOf": [{ "$ref": "#/$defs/AutomationFlag" }]
+    },
+    "post_kind": {
+      "description": "Kind of post relative to original content.",
+      "allOf": [{ "$ref": "#/$defs/PostKind" }]
+    },
+    "client_family": {
+      "description": "Broad class of client application.",
+      "allOf": [{ "$ref": "#/$defs/ClientFamily" }]
+    },
+    "media_provenance": {
+      "type": "string",
+      "description": "Level of media provenance information attached.",
+      "enum": ["c2pa_present", "hash_only", "none"]
+    },
+    "origin_hint": {
+      "type": "string",
+      "description": "Broad location bucket where content was first observed, if lawful.",
+      "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+    },
+    "dedup_hash": {
+      "type": "string",
+      "description": "Rolling hash identifier for identical media/text content.",
+      "pattern": "^[a-f0-9]{8,64}$"
+    }
+  },
+  "required": [
+    "acct_age_bucket",
+    "acct_type",
+    "automation_flag",
+    "post_kind",
+    "client_family",
+    "media_provenance",
+    "dedup_hash"
+  ],
+  "additionalProperties": false
+}

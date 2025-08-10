@@ -1,0 +1,3 @@
+include README.md LICENSE
+graft src/ci/transparency/spec/schemas
+global-exclude *.py[cod] __pycache__ *.DS_Store

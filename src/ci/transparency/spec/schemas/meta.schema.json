@@ -1,0 +1,64 @@
+{
+  "$id": "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/meta.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MetaDoc",
+  "type": "object",
+  "required": [
+    "topic",
+    "window",
+    "notes",
+    "seed",
+    "accounts_generated",
+    "posts_raw",
+    "buckets_aggregated",
+    "scenario_file",
+    "scenario_sha256",
+    "events"
+  ],
+  "properties": {
+    "topic": { "type": "string" },
+
+    "window": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+
+    "notes": { "type": "string" },
+    "seed": { "type": "integer" },
+    "accounts_generated": { "type": "integer", "minimum": 0 },
+    "posts_raw": { "type": "integer", "minimum": 0 },
+    "buckets_aggregated": { "type": "integer", "minimum": 0 },
+    "scenario_file": { "type": "string" },
+    "scenario_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["burst", "synchrony_wave"] },
+          "start": { "type": "string", "format": "date-time" },
+          "end": { "type": "string", "format": "date-time" },
+          "center": { "type": "string", "format": "date-time" },
+          "span_minutes": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "threat_type": {
+      "anyOf": [
+        { "type": "string", "enum": ["benign", "malicious", "mixed"] },
+        { "type": "null" }
+      ]
+    },
+    "threat_notes": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

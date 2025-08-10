@@ -1,0 +1,149 @@
+# transparency_api.openapi.yaml
+# This file is part of the Civic Transparency API specification.
+openapi: 3.1.0
+info:
+  title: Civic Transparency API
+  version: "0.0.1"
+  summary: Aggregated, privacy-preserving behavior signals for a topic/time window.
+  description: |
+    This OpenAPI file is **normative** for the HTTP interface. Response bodies
+    are defined by JSON Schemas under `spec/schemas/` and must validate against
+    the referenced schema(s).
+
+servers:
+  - url: https://api.example.org
+    description: Reference implementation (example)
+
+paths:
+  /transparency/v1/aggregate:
+    get:
+      operationId: getAggregateSeries
+      summary: Get aggregated behavior series for a topic
+      description: |
+        Returns an aggregated time series of behavior-only metrics (no content, no IDs)
+        for a given topic within a requested time window. Responses **must** satisfy
+        k-anonymity (e.g., k ≥ 100) and validate against the SeriesDoc schema.
+
+      parameters:
+        - name: topic
+          in: query
+          required: true
+          description: Hashtag or topic key (URL-encoded if it contains '#').
+          schema:
+            type: string
+            minLength: 1
+
+        - name: window_start
+          in: query
+          required: true
+          description: Start of the query window (ISO 8601, UTC).
+          schema:
+            type: string
+            format: date-time
+
+        - name: window_end
+          in: query
+          required: true
+          description: End of the query window (ISO 8601, UTC).
+          schema:
+            type: string
+            format: date-time
+
+        - name: granularity
+          in: query
+          required: true
+          description: Aggregation interval. Current reference implementation supports `minute`.
+          schema:
+            type: string
+            enum: [minute]
+
+      responses:
+        "200":
+          description: Aggregated behavior series (privacy-preserving).
+          headers:
+            X-Window-Start:
+              description: Effective start of the response window (may be clipped/cached).
+              schema: { type: string, format: date-time }
+            X-Window-End:
+              description: Effective end of the response window (may be clipped/cached).
+              schema: { type: string, format: date-time }
+            X-RateLimit-Limit:
+              description: The maximum number of requests you're permitted to make per time window.
+              schema: { type: integer, minimum: 1 }
+            X-RateLimit-Remaining:
+              description: The number of requests remaining in the current rate limit window.
+              schema: { type: integer, minimum: 0 }
+            X-RateLimit-Reset:
+              description: UTC epoch seconds when the current rate limit window resets.
+              schema: { type: integer, minimum: 0 }
+          content:
+            application/json:
+              # Normative schema (SeriesDoc)
+              schema:
+                $ref: "https://civic-interconnect.github.io/ct-spec/en/spec/schemas/series.schema.json"
+              examples:
+                example:
+                  summary: Minimal example (shape only; values illustrative)
+                  value:
+                    topic: "#CityElection2026"
+                    generated_at: "2026-02-07T00:00:00Z"
+                    interval: "minute"
+                    points:
+                      - ts: "2026-02-03T12:00:00Z"
+                        volume: 18423
+                        reshare_ratio: 0.93
+                        recycled_content_rate: 0.28
+                        acct_age_mix: {"0-7d":0.22,"8-30d":0.11,"1-6m":0.19,"6-24m":0.17,"24m+":0.31}
+                        automation_mix: {"manual":0.71,"scheduled":0.14,"api_client":0.11,"declared_bot":0.04}
+                        client_mix: {"web":0.47,"mobile":0.41,"third_party_api":0.12}
+                        coordination_signals:
+                          burst_score: 0.87
+                          synchrony_index: 0.74
+                          duplication_clusters: 11
+
+        "400":
+          description: Bad request (invalid parameters or window).
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  error: { type: string }
+                  detail: { type: string }
+              examples:
+                invalidWindow:
+                  value:
+                    error: "invalid_window"
+                    detail: "window_start must be before window_end"
+
+        "429":
+          description: Rate limit exceeded.
+          headers:
+            Retry-After:
+              description: Seconds until a new request is permitted.
+              schema: { type: integer, minimum: 1 }
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  error: { type: string }
+                  detail: { type: string }
+              examples:
+                rateLimited:
+                  value:
+                    error: "rate_limited"
+                    detail: "Too many requests; try again later."
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  error: { type: string }
+                  detail: { type: string }
