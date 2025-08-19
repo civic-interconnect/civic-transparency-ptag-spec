@@ -15,6 +15,19 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [0.2.1] - 2025-08-19
+
+### Added
+
+- **Additional tests:** Added more tests. 
+
+### Changed
+
+- **Series schema:** Allow empty points arrays (minItems: 0) for privacy-preserving use cases 
+
+
+---
+
 ## [0.2.0] - 2025-08-19
 
 ### Added
@@ -40,5 +53,6 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 - Versions are driven by git tags via `setuptools_scm`. Tag `vX.Y.Z` to release.
 - Docs are deployed per version tag and aliased to **latest**.
 
-[Unreleased]: https://github.com/civic-interconnect/civic-transparency-spec/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/civic-interconnect/civic-transparency-spec/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/civic-interconnect/civic-transparency-spec/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/civic-interconnect/civic-transparency-spec/releases/tag/v0.2.0

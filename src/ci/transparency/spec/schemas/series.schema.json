@@ -28,7 +28,7 @@
     "points": {
       "type": "array",
       "description": "Time-ordered list of per-interval aggregates.",
-      "minItems": 1,
+      "minItems": 0,
       "items": {
         "type": "object",
         "required": [
