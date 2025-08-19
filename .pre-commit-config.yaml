@@ -1,8 +1,32 @@
-# .pre-commit-config.yml
+# .pre-commit-config.yaml
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.8
     hooks:
+      - id: ruff-format
       - id: ruff
         args: [--fix]
 
+  - repo: local
+    hooks:        
+      - id: validate-schemas
+        name: Validate JSON Schemas
+        entry: python .github/scripts/validate_schemas.py
+        language: python
+        files: ^src/ci/transparency/spec/schemas/.*\.schema\.json$
+        pass_filenames: false
+        
+      - id: validate-openapi
+        name: Validate OpenAPI spec
+        entry: python .github/scripts/validate_openapi.py
+        language: python
+        files: ^src/ci/transparency/spec/schemas/.*\.openapi\.yaml$
+        pass_filenames: false
+        additional_dependencies: ['PyYAML']  
+        
+      - id: check-version-prep
+        name: Check if versions look ready for release
+        entry: python .github/scripts/check_version_prep.py
+        language: python
+        files: ^(CHANGELOG\.md|src/ci/transparency/spec/schemas/transparency_api\.openapi\.yaml)$
+        pass_filenames: false

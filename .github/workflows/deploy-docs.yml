@@ -1,31 +1,41 @@
 # .github/workflows/deploy-docs.yml
-name: Deploy CT Spec Docs with Mike
+name: Deploy CT Spec Docs (always latest main)
+# Designed to run on every push to the main branch.
+# It builds and deploys the latest version of the documentation to GitHub Pages.
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Mike requires full history
 
-      - uses: actions/setup-python@v5
+    permissions:
+      contents: write # gh-pages in docs job
+
+    steps:
+      - name: Checkout (full history with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python and cache
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install MkDocs and Mike
-        run: pip install -r requirements.txt
-
-      - name: Deploy Docs with Mike
+      - name: Assemble. Install all dev dependencies (non-editable)
         run: |
-          # The branch name will become the version alias (e.g., 'main' -> 'latest')
-          # To use a version number, you'd extract it from a tag or other source
-          mike deploy --push --update-aliases latest ${{ github.ref_name }}
+          pip install ".[dev]"
+
+      - name: Deploy. Build docs
+        run: mkdocs build
+
+      - name: Deploy. Deploy docs with Mike and set latest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mike deploy --push --update-aliases latest main
+          mike set-default --push latest

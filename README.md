@@ -1,15 +1,37 @@
-# Civic Transparency – Specifications
+# Civic Transparency Schemas (README.md)
 
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue?logo=python)](#)
-[![CI Status](https://github.com/civic-interconnect/civic-transparency-spec/actions/workflows/ci.yml/badge.svg)](https://github.com/civic-interconnect/civic-transparency-spec/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://civic-interconnect.github.io/civic-transparency-spec/)
-[![JSON Schema: Draft-07](https://img.shields.io/badge/JSON%20Schema-Draft--07-orange)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-> **Verified Provenance & Behavior Transparency Standard**
-> Civic Transparency is an open specification for privacy-preserving, non-partisan visibility into how content spreads online.
-> It defines machine-readable provenance tags and aggregated behavioral metrics that platforms can expose via a low-cost API, enabling journalists, watchdogs, and civic groups to detect coordination patterns and automation without exposing personal data or judging content.
+> JSON Schema definitions for privacy-preserving social media transparency APIs.
 
-- [Documentation](https://civic-interconnect.github.io/civic-transparency-spec/)
-- [Schemas](./specs/schema_index.md)
-- [Contributing](./CONTRIBUTING.md)
+## Schemas
+
+| Schema | Purpose | Status |
+|--------|---------|--------|
+| [`provenance_tag.schema.json`](./src/ci/transparency/spec/schemas/provenance_tag.schema.json) | Per-post behavioral metadata | Draft |
+| [`series.schema.json`](./src/ci/transparency/spec/schemas/series.schema.json) | Aggregated time series API responses | Draft |
+| [`transparency_api.openapi.yaml`](./src/ci/transparency/spec/schemas/transparency_api.openapi.yaml) | REST API specification | Draft |
+
+## Implementation
+
+1. Generate provenance tags when posts are created
+2. Aggregate tags into time buckets with k-anonymity (k≥100)
+3. Expose aggregated data via REST API
+
+See [API documentation](./src/ci/transparency/spec/schemas/transparency_api.openapi.yaml) for complete specification.
+
+## Privacy
+
+- All responses maintain k-anonymity (k≥100)
+- Individual posts and users are never exposed
+- Rare categories (<5%) are grouped as "other"
+- Geographic data limited to country-level
+
+## Versioning
+
+This specification follows semantic versioning.
+See CHANGELOG.md for version history.
+
+## License
+
+MIT

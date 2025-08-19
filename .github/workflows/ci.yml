@@ -1,43 +1,66 @@
 # .github/workflows/ci.yml
-name: Civic Transparency Spec CI
+name: Civic Transparency Spec CI (Lint, Test, Coverage)
+# Runs on every push to the main branch and on pull requests.
+# First line of defense, catches issues before they reach release.
+# Designed to fail fast, run all tests, and generate coverage reports.
+# It does not fix issues, only checks them.
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Checkout (full history with tags)
+        uses: actions/checkout@v4
         with:
-          python-version: "3.11"
+          fetch-depth: 0
 
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
+      - name: Setup Python and cache ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
 
-      # Linting with Ruff
-      - name: Lint with Ruff
+      - name: Assemble. Install dev deps (extras, non-editable)
+        run: |
+          pip install ".[dev]"
+
+      - name: Baseline. Ruff lint (fail fast, check only, no format or auto-fix in CI)
         run: ruff check .
 
-      # Validate Schemas (using Python)
-      - name: Validate JSON Schemas (Draft-07)
-        run: python .github/scripts/validate_schemas.py
-      - name: Validate OpenAPI
-        run: python .github/scripts/validate_open_api.py
+      - name: Validate. JSON Schema validation
+        run: |
+          check-jsonschema --schemafile https://json-schema.org/draft/2020-12/schema \
+            src/ci/transparency/spec/schemas/*.schema.json
 
-      # Run Tests
-      - name: Run Tests
-        run: pytest --cov --cov-report=xml
-      - name: Codecov Upload
-        uses: codecov/codecov-action@v4
+      - name: Baseline. Run tests (include any validation and coverage)
+        run: pytest -q
+
+      - name: Coverage. Generate summary
+        run: python .github/scripts/coverage_summary.py
+
+      - name: Coverage. Build HTML
+        run: coverage html
+
+      - name: Coverage. Combine and Upload Reports
+        uses: actions/upload-artifact@v4
         with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          
-      # Build Documentation (sanity check)
-      - name: Build Docs (Sanity Check)
+          name: coverage-reports-${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            htmlcov/
+          overwrite: true
+
+      - name: Deploy. Build docs (sanity check)
         run: mkdocs build
+

@@ -1,58 +1,101 @@
-name: CT Spec Release (PyPI + versioned docs)
+# .github/workflows/release.yml
+name: CT Spec Release (GH Release + PyPI + versioned docs)
+# Designed to run only on version tags (e.g., v0.1.4).
+# Final step before distribution.
+# It builds distribution files, runs tests, prepares release, and publishes.
 
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*.*.*"  # trigger only on version tags like v0.1.4
 
 permissions:
-  contents: read
-  id-token: write  # required for PyPI Trusted Publishing
-  pages: write     # for GH Pages via mike
+  contents: write   # create the GitHub Release
+  id-token: write   # PyPI Trusted Publishing (OIDC)
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout with full history
+      - name: Checkout (full history with tags) 
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
+      - name: Setup Python and cache
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install build deps
+      - name: Versioning. Extract plain version from tag (no leading `v`)
+        id: ver
+        shell: bash
+        run: echo "plain=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Versioning. Print build version for logs
+        run: echo "Building version ${{ steps.ver.outputs.plain }}"
+
+      - name: Validate. Check API version matches tag
         run: |
-          pip install --upgrade pip
-          pip install build
+          API_VERSION=$(grep 'version: "' src/ci/transparency/spec/schemas/transparency_api.openapi.yaml | cut -d'"' -f2)
+          TAG_VERSION="${{ steps.ver.outputs.plain }}"
+          
+          echo "API version: $API_VERSION"
+          echo "Tag version: $TAG_VERSION"
+          
+          if [ "$API_VERSION" != "$TAG_VERSION" ]; then
+            echo "ERROR: API version ($API_VERSION) doesn't match tag ($TAG_VERSION)"
+            echo "Please update the API version in transparency_api.openapi.yaml"
+            exit 1
+          fi
+          
+          echo "SUCCESS: API version matches tag"
 
-      # If your package includes JSON schemas, be sure they’re in the sdist/wheel.
-      # This assumes MANIFEST.in and pyproject are configured (see notes below).
+      - name: Validate. Required files exist
+        run: |
+          required_files=(
+            "src/ci/transparency/spec/schemas/provenance_tag.schema.json"
+            "src/ci/transparency/spec/schemas/series.schema.json" 
+            "src/ci/transparency/spec/schemas/transparency_api.openapi.yaml"
+          )
+          
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Missing required file: $file"
+              exit 1
+            fi
+            echo "SUCCESS: Found: $file"
+          done
 
-      - name: Build sdist + wheel
+      - name: Assemble. Install all dev dependencies (non-editable)
+        run: |
+          pip install ".[dev]"
+
+      - name: Baseline. Run tests (include any validation and coverage)
+        run: pytest -q
+
+      - name: Deploy. Build sdist + wheel (exact version)
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ steps.ver.outputs.plain }}
         run: python -m build
 
-      - name: Publish to PyPI (Trusted Publishing)
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Deploy. List artifacts
+        run: python .github/scripts/list_artifacts.py
 
-  docs:
-    needs: build-and-publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Deploy. Create GitHub Release, upload artifacts and set as latest
+        uses: softprops/action-gh-release@v2
         with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install MkDocs + Mike
-        run: pip install -r requirements.txt
-      - name: Deploy versioned docs with Mike
-        env:
-          TAG: ${{ github.ref_name }}         # e.g., v0.4.0
-        run: |
-          # Use the tag as the docs version; also update 'latest' alias
-          mike deploy --push --update-aliases latest "$TAG"
+          tag_name: ${{ github.ref_name }}  # e.g., v0.1.4
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+          draft: false
+          prerelease: false
+          make_latest: true
+
+      - name: Deploy. Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
