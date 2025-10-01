@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: Civic Transparency PTag Specification
+message: If you use this software, please cite it as below.
+type: software
+authors:
+  - name: Civic Interconnect
+repository-code: https://github.com/civic-interconnect/civic-transparency-ptag-spec
+license: MIT
+keywords:
+  - civic
+  - transparency
+  - provenance
+  - ptag
+  - schemas
+  - json schema
+  - openapi
+  - security
+  - vulnerability
+  - privacy
+  - data integrity

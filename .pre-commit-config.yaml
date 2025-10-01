@@ -1,0 +1,71 @@
+# .pre-commit-config.yaml
+exclude: |
+  (?x)^(
+    \.venv/|
+    dist/|
+    build/|
+    htmlcov/|
+    site/|
+    .*\.egg-info/
+  )
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.0
+    hooks:
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+
+  - repo: https://github.com/fpgmaas/deptry
+    rev: 0.23.1
+    hooks:
+      - id: deptry
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.6
+    hooks:
+      - id: bandit
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]
+
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: uv run pyright
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      - id: validate-schemas
+        name: Validate JSON Schemas
+        entry: python .github/scripts/validate_schemas.py
+        language: python
+        files: ^src/ci/transparency/ptag/spec/schemas/.*\.schema\.json$
+        pass_filenames: false
+
+      - id: validate-openapi
+        name: Validate OpenAPI spec
+        entry: python .github/scripts/validate_openapi.py
+        language: python
+        files: ^src/ci/transparency/ptag/spec/schemas/.*\.openapi\.yaml$
+        pass_filenames: false
+        additional_dependencies: ["PyYAML"]
+
+      - id: check-version-prep
+        name: Check if versions look ready for release
+        entry: python .github/scripts/check_version_prep.py
+        language: python
+        files: ^(CHANGELOG\.md|src/ci/transparency/ptag/spec/schemas/ptag_api\.openapi\.yaml)$
+        pass_filenames: false

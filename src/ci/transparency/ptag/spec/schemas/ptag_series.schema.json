@@ -1,0 +1,247 @@
+{
+  "$id": "ptag_series.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-canonical": "https://civic-interconnect.github.io/civic-transparency-ptag-spec/en/spec/schemas/ptag_series.schema.json",
+  "title": "SeriesDoc",
+  "description": "Aggregated, privacy-preserving behavior series for a topic over time.",
+  "$defs": {
+    "Probability": {
+      "$anchor": "Probability",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+
+    "Interval": {
+      "$anchor": "Interval",
+      "type": "string",
+      "enum": ["minute", "5-minute", "15-minute", "hour"],
+      "description": "Aggregation interval for time-series data."
+    },
+
+    "SeriesPoint": {
+      "$anchor": "SeriesPoint",
+      "type": "object",
+      "required": [
+        "interval_start",
+        "volume",
+        "reshare_ratio",
+        "recycled_content_rate",
+        "acct_age_mix",
+        "automation_mix",
+        "client_mix",
+        "coordination_signals"
+      ],
+      "properties": {
+        "interval_start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start of this aggregation interval in UTC (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ). Each point represents data from interval_start (inclusive) to the next interval boundary (exclusive)."
+        },
+        "volume": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total posts observed in this interval."
+        },
+        "reshare_ratio": {
+          "allOf": [{ "$ref": "#/$defs/Probability" }],
+          "description": "Fraction of posts that are reshares in this interval."
+        },
+        "recycled_content_rate": {
+          "allOf": [{ "$ref": "#/$defs/Probability" }],
+          "description": "Estimated fraction of posts that recycle prior content (hash/duplicate-based)."
+        },
+
+        "acct_age_mix": {
+          "type": "object",
+          "description": "Distribution over account-age buckets; values typically sum to ~1.0.",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "./ptag.schema.json#/$defs/AcctAge" },
+          "additionalProperties": {
+            "allOf": [{ "$ref": "#/$defs/Probability" }]
+          }
+        },
+
+        "automation_mix": {
+          "type": "object",
+          "description": "Distribution over automation flags; values typically sum to ~1.0.",
+          "minProperties": 1,
+          "propertyNames": {
+            "$ref": "./ptag.schema.json#/$defs/AutomationFlag"
+          },
+          "additionalProperties": {
+            "allOf": [{ "$ref": "#/$defs/Probability" }]
+          }
+        },
+
+        "client_mix": {
+          "type": "object",
+          "description": "Distribution over client families; values typically sum to ~1.0.",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "./ptag.schema.json#/$defs/ClientFamily" },
+          "additionalProperties": {
+            "allOf": [{ "$ref": "#/$defs/Probability" }]
+          }
+        },
+
+        "coordination_signals": {
+          "type": "object",
+          "description": "Per-interval coordination indicators.",
+          "required": [
+            "burst_score",
+            "synchrony_index",
+            "duplication_clusters"
+          ],
+          "properties": {
+            "burst_score": {
+              "allOf": [{ "$ref": "#/$defs/Probability" }],
+              "description": "Burstiness indicator (0-1)."
+            },
+            "synchrony_index": {
+              "allOf": [{ "$ref": "#/$defs/Probability" }],
+              "description": "Temporal synchrony indicator (0-1)."
+            },
+            "duplication_clusters": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Count of duplicate/near-duplicate content clusters."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "type": "object",
+  "required": ["topic", "generated_at", "interval", "points"],
+  "properties": {
+    "topic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Topic key (e.g., hashtag) this series describes."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp when this series was generated (ISO 8601)."
+    },
+    "interval": {
+      "type": "string",
+      "enum": ["minute", "5-minute", "15-minute", "hour"],
+      "description": "Aggregation interval for time-series data.",
+      "default": "5-minute"
+    },
+    "points": {
+      "type": "array",
+      "description": "Time-ordered list of per-interval aggregates.",
+      "minItems": 0,
+      "items": { "$ref": "#/$defs/SeriesPoint" }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "topic": "#CityElection2026",
+      "generated_at": "2026-02-07T00:00:00Z",
+      "interval": "5-minute",
+      "points": [
+        {
+          "interval_start": "2026-02-03T12:00:00Z",
+          "volume": 92115,
+          "reshare_ratio": 0.91,
+          "recycled_content_rate": 0.26,
+          "acct_age_mix": {
+            "0-7d": 0.18,
+            "8-30d": 0.12,
+            "1-6m": 0.21,
+            "6-24m": 0.19,
+            "24m+": 0.30
+          },
+          "automation_mix": {
+            "manual": 0.73,
+            "scheduled": 0.15,
+            "api_client": 0.09,
+            "declared_bot": 0.03
+          },
+          "client_mix": {
+            "web": 0.46,
+            "mobile": 0.43,
+            "third_party_api": 0.11
+          },
+          "coordination_signals": {
+            "burst_score": 0.64,
+            "synchrony_index": 0.52,
+            "duplication_clusters": 8
+          }
+        },
+        {
+          "interval_start": "2026-02-03T12:05:00Z",
+          "volume": 87432,
+          "reshare_ratio": 0.89,
+          "recycled_content_rate": 0.24,
+          "acct_age_mix": {
+            "0-7d": 0.19,
+            "8-30d": 0.13,
+            "1-6m": 0.20,
+            "6-24m": 0.18,
+            "24m+": 0.30
+          },
+          "automation_mix": {
+            "manual": 0.72,
+            "scheduled": 0.16,
+            "api_client": 0.09,
+            "declared_bot": 0.03
+          },
+          "client_mix": {
+            "web": 0.45,
+            "mobile": 0.44,
+            "third_party_api": 0.11
+          },
+          "coordination_signals": {
+            "burst_score": 0.61,
+            "synchrony_index": 0.49,
+            "duplication_clusters": 7
+          }
+        }
+      ]
+    },
+    {
+      "topic": "#LocalTownHall",
+      "generated_at": "2026-02-07T00:00:00Z",
+      "interval": "hour",
+      "points": [
+        {
+          "interval_start": "2026-02-03T14:00:00Z",
+          "volume": 487,
+          "reshare_ratio": 0.31,
+          "recycled_content_rate": 0.08,
+          "acct_age_mix": {
+            "0-7d": 0.06,
+            "8-30d": 0.08,
+            "1-6m": 0.15,
+            "6-24m": 0.23,
+            "24m+": 0.48
+          },
+          "automation_mix": {
+            "manual": 0.91,
+            "scheduled": 0.05,
+            "api_client": 0.03,
+            "declared_bot": 0.01
+          },
+          "client_mix": {
+            "web": 0.52,
+            "mobile": 0.44,
+            "third_party_api": 0.04
+          },
+          "coordination_signals": {
+            "burst_score": 0.12,
+            "synchrony_index": 0.09,
+            "duplication_clusters": 1
+          }
+        }
+      ]
+    }
+  ]
+}

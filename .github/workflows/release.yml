@@ -1,0 +1,127 @@
+# .github/workflows/release.yml
+name: PTag Spec Release (GH Release + PyPI + versioned docs)
+# Designed to run only on version tags (e.g., v0.1.4).
+# Final step before distribution.
+# It builds distribution files, runs tests, prepares release, and publishes.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"  # trigger only on version tags like v0.1.4
+
+permissions:
+  contents: write   # create the GitHub Release
+  id-token: write   # PyPI Trusted Publishing (OIDC)
+
+jobs:
+  # First job: Run the full CI suite
+  ci-validation:
+    name: Run CI validation before release
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  # Second job: Verify docs build correctly
+  docs-validation:
+    name: Verify documentation builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout (full history with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Setup Python 3.12
+        run: |
+          uv python install 3.12
+          uv venv .venv --python 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra dev --extra docs
+
+      - name: Build documentation
+        run: uv run mkdocs build --strict
+
+      - name: Verify API docs generate correctly
+        run: |
+          # Check that key documentation files were generated
+          [ -f "site/index.html" ] || { echo "Main docs missing"; exit 1; }
+          echo "Documentation built successfully"
+
+  # Third job: Only run if both CI and docs pass
+  build-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: [ci-validation, docs-validation]
+
+    steps:
+      - name: Checkout (full history with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Setup Python 3.12
+        run: |
+          uv python install 3.12
+          uv venv .venv --python 3.12
+
+      - name: Versioning. Extract plain version from tag (no leading `v`)
+        id: ver
+        shell: bash
+        run: echo "plain=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Versioning. Print build version for logs
+        run: echo "Building version ${{ steps.ver.outputs.plain }}"
+
+      - name: Assemble. Install all dev dependencies with uv
+        run: uv sync --extra dev --extra docs
+
+      - name: Assemble. Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Baseline. Run tests (include any validation and coverage)
+        run: uv run pytest -q
+
+      - name: Deploy. Build sdist + wheel (exact version)
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ steps.ver.outputs.plain }}
+        run: uv run python -m build
+
+      - name: Deploy. List built artifacts
+        run: uv run python .github/scripts/list_artifacts.py
+
+      - name: Deploy. Create GitHub Release, upload artifacts and set as latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euxo pipefail
+          TAG="${{ github.ref_name }}"
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --title "$TAG" --notes "Automated release" --latest
+          gh release upload "$TAG" dist/*.whl dist/*.tar.gz --clobber
+
+      # First attempt: normal publish with attestations
+      - name: Deploy. Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        # keep defaults; attestations enabled (good supply-chain hygiene)
+
+      # If the first attempt fails (often due to transient OIDC/attestation), retry once.
+      # The retry is SAFE: skip anything already uploaded; try again for what failed.
+      - name: Deploy. Publish to PyPI (retry if transient; idempotent)
+        if: failure()
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        with:
+          skip-existing: true  # don't error if artifacts already present
+          # attestations enabled here as well (default)

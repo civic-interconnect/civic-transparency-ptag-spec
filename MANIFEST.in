@@ -1,0 +1,20 @@
+# MANIFEST.in
+
+# Core project files
+include CITATION.cff
+include LICENSE
+include README.md
+include pyproject.toml
+
+# Package code + data (ptag namespace)
+graft src/ci/transparency/ptag/spec
+recursive-include src/ci/transparency/ptag/spec/schemas *.json *.yaml
+
+# Exclude non-distribution directories
+prune .github
+prune docs
+prune site
+prune tests
+
+# Exclude misc config/artifacts
+exclude .editorconfig .gitattributes .gitignore .pre-commit-config.yaml CODE_OF_CONDUCT.md CONTRIBUTING.md mkdocs.yml

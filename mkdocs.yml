@@ -1,0 +1,77 @@
+site_name: Draft Civic Transparency PTag Schemas
+site_description: Draft Testing Schemas for the Civic Transparency Provenance Tags project
+site_author: Civic Interconnect
+site_url: https://civic-interconnect.github.io/civic-transparency-ptag-spec/
+repo_url: https://github.com/civic-interconnect/civic-transparency-ptag-spec
+edit_uri: edit/main/docs/en/
+
+theme:
+  name: material
+  language: en
+  favicon: img/favicon.png
+  palette:
+    scheme: default
+    primary: indigo
+    accent: indigo
+  features:
+    - content.footer
+    - navigation.tabs
+    - navigation.top
+    - navigation.expand
+    - navigation.sections
+    - navigation.indexes
+    - navigation.tracking
+  copyright: Copyright &copy; 2025 Civic Interconnect
+
+nav:
+- Home: index.md
+- Privacy: privacy.md
+- Usage: usage.md
+- Specs:
+  - Schemas (Index): specs/index.md
+  - Provenance Tag (Schema): specs/ptag.md
+  - Series (Schema): specs/ptag_series.md
+  - Transparency API: specs/ptag_api.md
+  - Guide:
+      - Series: guide/series.md
+      - Enums: guide/enums.md
+  - API:
+      - Types: api/types.md
+
+docs_dir: docs/en
+
+plugins:
+  - search
+  - include-markdown
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: en
+          default: true
+          name: English
+
+  - git-revision-date-localized:
+      type: iso_date
+      fallback_to_build_date: true
+      enable_creation_date: false
+
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: false
+            members: true
+            show_root_heading: true
+            show_signature: true
+            group_by_category: true
+            filters: ["!^_"]  # hide private members
+            find_stubs_package: true
+
+markdown_extensions:
+- admonition
+- codehilite
+- pymdownx.snippets
+- pymdownx.tabbed
+- toc
