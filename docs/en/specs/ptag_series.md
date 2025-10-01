@@ -1,6 +1,6 @@
 # Series (Schema)
 
-Schema: [`ptag_series.schema.json`](../../src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json)
+Schema: [`ptag_series.schema.json`](https://github.com/civic-interconnect/civic-transparency-ptag-spec/blob/main/src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json)
 
 Defines an **aggregated time series** of provenance-tag-derived metrics.
 

@@ -1,6 +1,6 @@
 # Provenance Tag (Schema)
 
-Schema: [`ptag.schema.json`](../../src/ci/transparency/ptag/spec/schemas/ptag.schema.json)
+Schema: [`ptag.schema.json`](https://github.com/civic-interconnect/civic-transparency-ptag-spec/blob/main/src/ci/transparency/ptag/spec/schemas/ptag.schema.json)
 
 Defines **per-post provenance tags** - categorical, privacy-preserving signals used only for aggregation.
 

@@ -1,6 +1,6 @@
 # Transparency API
 
-OpenAPI: [`ptag_api.openapi.yaml`](../../src/ci/transparency/ptag/spec/schemas/ptag_api.openapi.yaml)
+OpenAPI: [`ptag_api.openapi.yaml`](https://github.com/civic-interconnect/civic-transparency-ptag-spec/blob/main/src/ci/transparency/ptag/spec/schemas/ptag_api.openapi.yaml)
 
 Defines the REST API for retrieving aggregated transparency data.
 
