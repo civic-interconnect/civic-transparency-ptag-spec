@@ -1,33 +1,16 @@
 # Usage
 
-You can consume this specification in two main ways:
+This specification provides machine-readable schemas for generating typed models.
 
-1. **Schemas** - Direct JSON Schema / OpenAPI validation.
-2. **Typed Packages** - Install language bindings generated from these schemas.
+## For Implementers
 
-### Example (Python)
+1. **Choose your language** - See [Types](api/types.md) for pre-built libraries
+2. **Validate responses** - All data must validate against the JSON Schemas
+3. **Pin versions** - Lock to a specific schema version (e.g., `v0.2.2`)
 
-```python
-from ci.transparency.types import Series, ProvenanceTag
+## For API Providers
 
-tag = ProvenanceTag(
-    acct_age_bucket="1-6m",
-    acct_type="person",
-    automation_flag="manual",
-    post_kind="original",
-    client_family="mobile",
-    media_provenance="hash_only",
-    dedup_hash="a1b2c3d4"
-)
+The [PTag API](specs/ptag_api.md) specification defines conformant endpoints.
+All responses must validate against the JSON Schemas and enforce k-anonymity (k ≥ 100).
 
-series = Series(
-    topic="#LocalElection",
-    generated_at="2025-01-15T12:00:00Z",
-    interval="minute",
-    points=[]
-)
-```
-
-See Guide for more.
-
----
+See [Privacy](privacy.md) for aggregation requirements.

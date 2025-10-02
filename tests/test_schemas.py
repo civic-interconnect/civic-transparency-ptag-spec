@@ -31,13 +31,13 @@ def test_json_schemas_are_valid() -> None:
 
 
 def test_series_schema_points_array() -> None:
-    """Test that series schema allows 0, 1, or more points."""
+    """Test that PTagSeries schema allows 0, 1, or more points."""
     from referencing import Registry, Resource
 
     # Load both schemas to resolve cross-references
     pkg = files("ci.transparency.ptag.spec.schemas")
 
-    # Load series schema
+    # Load PTagSeries schema
     series_path = pkg.joinpath("ptag_series.schema.json")
     with open(str(series_path), "r", encoding="utf-8") as f:
         series_schema = json.load(f)
@@ -59,7 +59,7 @@ def test_series_schema_points_array() -> None:
         series_schema, registry=registry
     )  # type: ignore[no-untyped-call]
 
-    # Base valid series data (without points)
+    # Base valid PTagSeries data (without points)
     base_series = {
         "topic": "#TestTopic",
         "generated_at": "2026-02-07T00:00:00Z",

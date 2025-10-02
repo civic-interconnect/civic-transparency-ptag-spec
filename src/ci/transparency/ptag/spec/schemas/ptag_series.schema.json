@@ -2,7 +2,7 @@
   "$id": "ptag_series.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-canonical": "https://civic-interconnect.github.io/civic-transparency-ptag-spec/en/spec/schemas/ptag_series.schema.json",
-  "title": "SeriesDoc",
+  "title": "PTagSeries",
   "description": "Aggregated, privacy-preserving behavior series for a topic over time.",
   "$defs": {
     "Probability": {
@@ -12,15 +12,15 @@
       "maximum": 1.0
     },
 
-    "Interval": {
-      "$anchor": "Interval",
+    "PTagInterval": {
+      "$anchor": "PTagInterval",
       "type": "string",
       "enum": ["minute", "5-minute", "15-minute", "hour"],
       "description": "Aggregation interval for time-series data."
     },
 
-    "SeriesPoint": {
-      "$anchor": "SeriesPoint",
+    "PTagSeriesPoint": {
+      "$anchor": "PTagSeriesPoint",
       "type": "object",
       "required": [
         "interval_start",
@@ -120,16 +120,15 @@
     "topic": {
       "type": "string",
       "minLength": 1,
-      "description": "Topic key (e.g., hashtag) this series describes."
+      "description": "Topic key (e.g., hashtag) this PTagSeries describes."
     },
     "generated_at": {
       "type": "string",
       "format": "date-time",
-      "description": "UTC timestamp when this series was generated (ISO 8601)."
+      "description": "UTC timestamp when this PTagSeries was generated (ISO 8601)."
     },
     "interval": {
-      "type": "string",
-      "enum": ["minute", "5-minute", "15-minute", "hour"],
+      "$ref": "#/$defs/PTagInterval",
       "description": "Aggregation interval for time-series data.",
       "default": "5-minute"
     },
@@ -137,7 +136,7 @@
       "type": "array",
       "description": "Time-ordered list of per-interval aggregates.",
       "minItems": 0,
-      "items": { "$ref": "#/$defs/SeriesPoint" }
+      "items": { "$ref": "#/$defs/PTagSeriesPoint" }
     }
   },
   "additionalProperties": false,

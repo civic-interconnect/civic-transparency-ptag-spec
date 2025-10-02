@@ -31,10 +31,13 @@ paths:
       tags: [transparency]
       operationId: getAggregateSeries
       summary: Get aggregated behavior series for a topic
+      security:
+        - apiKey: []  # Option 1: with key
+        - {}          # Option 2: no auth (public access)
       description: |
         Returns an aggregated time series of behavior-only metrics (**no content, no IDs**)
         for a given topic within a requested time window. Responses **must** satisfy
-        k-anonymity (e.g., k ≥ 100) and validate against the SeriesDoc schema.
+        k-anonymity (e.g., k ≥ 100) and validate against the PTagSeries schema.
 
         Coordination signals are computed from provenance tag patterns across the time window.
       parameters:
@@ -56,7 +59,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SeriesDoc"
+                $ref: "#/components/schemas/PTagSeries"
               examples:
                 example:
                   summary: Minimal example (shape only; values illustrative)
@@ -103,6 +106,17 @@ paths:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
 
 components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        Optional API key for researchers and institutional access.
+        Provides higher rate limits and extended time windows.
+
+        Request access: https://civic-interconnect.org/api-access
+
   parameters:
     topic:
       name: topic
@@ -181,7 +195,7 @@ components:
 
   schemas:
     # Use local relative ref so CI never fetches over network.
-    SeriesDoc:
+    PTagSeries:
       $ref: "./ptag_series.schema.json"
       x-canonical-schema: "https://civic-interconnect.github.io/civic-transparency-ptag-spec/latest/en/spec/schemas/ptag_series.schema.json"
 

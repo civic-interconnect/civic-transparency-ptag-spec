@@ -23,21 +23,6 @@ theme:
     - navigation.tracking
   copyright: Copyright &copy; 2025 Civic Interconnect
 
-nav:
-- Home: index.md
-- Privacy: privacy.md
-- Usage: usage.md
-- Specs:
-  - Schemas (Index): specs/index.md
-  - Provenance Tag (Schema): specs/ptag.md
-  - Series (Schema): specs/ptag_series.md
-  - Transparency API: specs/ptag_api.md
-  - Guide:
-      - Series: guide/series.md
-      - Enums: guide/enums.md
-  - API:
-      - Types: api/types.md
-
 docs_dir: docs/en
 
 plugins:
@@ -75,3 +60,18 @@ markdown_extensions:
 - pymdownx.snippets
 - pymdownx.tabbed
 - toc
+
+nav:
+- Home: index.md
+- Privacy: privacy.md
+- Usage: usage.md
+- Specs:
+  - Schemas (Index): specs/index.md
+  - PTag (Schema): specs/ptag.md
+  - PTagSeries (Schema): specs/ptag_series.md
+  - PTag API: specs/ptag_api.md
+  - Guide:
+      - PTagSeries: guide/series.md
+      - Enums: guide/enums.md
+  - API:
+      - Types: api/types.md

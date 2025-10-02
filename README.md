@@ -14,7 +14,7 @@
 | Schema | Purpose | Status |
 |--------|---------|--------|
 | [`ptag.schema.json`](./src/ci/transparency/ptag/spec/schemas/ptag.schema.json) | Per-post behavioral metadata | Draft |
-| [`ptag_series.schema.json`](./src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json) | Aggregated time series API responses | Draft |
+| [`ptag_series.schema.json`](./src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json) | Aggregated time PTagSeries API responses | Draft |
 | [`ptag_api.openapi.yaml`](./src/ci/transparency/ptag/spec/schemas/ptag_api.openapi.yaml) | REST API specification | Draft |
 
 ## Implementation Flow

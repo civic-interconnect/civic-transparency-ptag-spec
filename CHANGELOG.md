@@ -15,15 +15,29 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [0.2.3] - 2025-10-02
+
+### Changed
+- **Schema naming:** Aligned all type names with `PTag` prefix for consistency (`PTagInterval`, `PTagSeries`, `PTagSeriesPoint`)
+- **Schema metadata:** Added `title` and `description` to all `$defs` in `ptag.schema.json` for improved code generation and documentation
+- **ISO3166 pattern:** Tightened regex to `^[A-Z]{2}(-[A-Z]{1,3})?$` (letters only in subdivision codes)
+- **Documentation:** Removed implementation code from spec docs, keeping focus on normative schemas
+
+### Added
+- **API authentication:** Optional API key scheme in OpenAPI spec for researcher access (public: 10 req/hr, researcher: 1000 req/hr)
+- **Enhanced API docs:** Parameter tables, authentication tiers, and conformance requirements in `specs/ptag_api.md`
+
+---
+
 ## [0.2.2] - 2025-10-01
 
 ### Changed (BREAKING)
-- **SeriesPoint field renamed**: `ts` → `interval_start` for clarity
+- **PTagSeriesPoint field renamed**: `ts` → `interval_start` for clarity
 - **Interval default**: Changed from `minute` to `5-minute`
 
 ### Added
 - Multi-interval support: `5-minute`, `15-minute`, `hour` granularities
-- SeriesPoint as reusable `$defs` type (previously inline only)
+- PTagSeriesPoint as reusable `$defs` type (previously inline only)
 
 ---
 
@@ -64,7 +78,8 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 - Versions are driven by git tags via `setuptools_scm`. Tag `vX.Y.Z` to release.
 - Docs are deployed per version tag and aliased to **latest**.
 
-[Unreleased]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/releases/tag/v0.2.0

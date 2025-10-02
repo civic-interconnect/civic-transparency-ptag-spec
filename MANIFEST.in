@@ -1,7 +1,6 @@
 # MANIFEST.in
 
 # Core project files
-include CITATION.cff
 include LICENSE
 include README.md
 include pyproject.toml

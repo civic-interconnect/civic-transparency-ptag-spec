@@ -2,14 +2,20 @@
   "$id": "ptag.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-canonical": "https://civic-interconnect.github.io/civic-transparency-ptag-spec/en/spec/schemas/ptag.schema.json",
-  "title": "Provenance Tag",
+  "title": "Provenance Tag (PTag)",
   "description": "Per-post provenance tags. Values are bucketed/categorical-no PII or direct identifiers.",
   "$defs": {
     "AcctAge": {
+      "$anchor": "AcctAge",
+      "title": "Account Age Bucket",
+      "description": "Privacy-preserving account age categories. Bucketed to prevent precise age correlation while enabling analysis of account maturity patterns.",
       "type": "string",
       "enum": ["0-7d", "8-30d", "1-6m", "6-24m", "24m+"]
     },
     "AcctType": {
+      "$anchor": "AcctType",
+      "title": "Account Type",
+      "description": "Declared or verified account identity type. Reflects the account's stated purpose or verified status on the platform.",
       "type": "string",
       "enum": [
         "person",
@@ -21,29 +27,45 @@
       ]
     },
     "AutomationFlag": {
+      "$anchor": "AutomationFlag",
+      "title": "Automation Flag",
+      "description": "Posting method classification with clear boundaries: manual (direct user interaction), scheduled (user-configured delayed posting), api_client (third-party tools like Buffer/Hootsuite), declared_bot (automated systems with explicit bot declaration).",
       "type": "string",
       "enum": ["manual", "scheduled", "api_client", "declared_bot"]
     },
     "PostKind": {
+      "$anchor": "PostKind",
+      "title": "Post Kind",
+      "description": "Content relationship type indicating how this post relates to other content: original (new content), reshare (repost/retweet), quote (repost with commentary), reply (response to another post).",
       "type": "string",
       "enum": ["original", "reshare", "quote", "reply"]
     },
     "ClientFamily": {
+      "$anchor": "ClientFamily",
+      "title": "Client Family",
+      "description": "Application class used to create the post: web (browser-based), mobile (native mobile app), third_party_api (external tools and integrations).",
       "type": "string",
       "enum": ["web", "mobile", "third_party_api"]
     },
     "MediaProvenance": {
+      "$anchor": "MediaProvenance",
+      "title": "Media Provenance",
+      "description": "Embedded authenticity metadata for attached media: c2pa_present (C2PA content credentials found), hash_only (perceptual hash available), none (no provenance metadata).",
       "type": "string",
       "enum": ["c2pa_present", "hash_only", "none"]
     },
     "ISO3166CountryOrSubdivision": {
+      "$anchor": "ISO3166CountryOrSubdivision",
+      "title": "ISO 3166 Country or Subdivision",
+      "description": "Uppercase ISO-3166-1 alpha-2 country code, optionally with ISO-3166-2 subdivision for populations >1M (e.g., US, US-CA). Limited to country-level for privacy.",
       "type": "string",
-      "description": "Uppercase ISO-3166-1 alpha-2 country code, optionally with ISO-3166-2 subdivision (e.g., US or US-CA).",
-      "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+      "pattern": "^[A-Z]{2}(-[A-Z]{1,3})?$"
     },
     "HexHash8": {
+      "$anchor": "HexHash8",
+      "title": "8-Character Hex Hash",
+      "description": "Fixed 8-character lowercase hex hash for privacy-preserving duplicate detection. Daily salted to prevent cross-dataset correlation.",
       "type": "string",
-      "description": "Fixed 8-character lowercase hex hash (privacy-preserving, daily salted).",
       "pattern": "^[a-f0-9]{8}$",
       "minLength": 8,
       "maxLength": 8

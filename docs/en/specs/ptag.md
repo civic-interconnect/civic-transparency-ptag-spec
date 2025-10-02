@@ -1,4 +1,4 @@
-# Provenance Tag (Schema)
+# PTag (Schema)
 
 Schema: [`ptag.schema.json`](https://github.com/civic-interconnect/civic-transparency-ptag-spec/blob/main/src/ci/transparency/ptag/spec/schemas/ptag.schema.json)
 

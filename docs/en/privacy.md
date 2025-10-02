@@ -8,7 +8,6 @@ This specification is **privacy-first**:
 - **Daily-salted hashes**: Duplicate detection hashes rotate daily to prevent cross-dataset correlation
 - **Geographic limits**: At most country-level, or large subdivisions (≥1M population).
 
----
 
 ## Guiding Principles
 
@@ -45,5 +44,3 @@ This specification is **privacy-first**:
 
 - **Transparency-compliant.**
   Enables platforms to meet obligations under emerging transparency laws (e.g., the **EU Digital Services Act**) without revealing personally identifiable information.
-
----

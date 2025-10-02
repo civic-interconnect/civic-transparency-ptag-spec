@@ -1,11 +1,11 @@
-# Series (Schema)
+# PTagSeries (Schema)
 
 Schema: [`ptag_series.schema.json`](https://github.com/civic-interconnect/civic-transparency-ptag-spec/blob/main/src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json)
 
 Defines an **aggregated time series** of provenance-tag-derived metrics.
 
-- Each document is a **SeriesDoc**
-- Each time bucket is a **SeriesPoint**
+- Each document is a **PTagSeries**
+- Each time bucket is a **PTagSeriesPoint**
 - Includes **coordination signals**
 
 - **Enums:** See [Guide → Enums](../guide/enums.md) (e.g., `Interval`)
@@ -21,5 +21,3 @@ Defines an **aggregated time series** of provenance-tag-derived metrics.
 - Coordination signals: `burst_score`, `synchrony_index`, `duplication_clusters`
 
 > **Normative definition:** JSON Schema at `src/ci/transparency/ptag/spec/schemas/ptag_series.schema.json`
-
----

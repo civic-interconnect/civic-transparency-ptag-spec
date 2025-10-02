@@ -1,29 +1,25 @@
-# Guide: Series
+# Guide: PTagSeries
 
-A **SeriesDoc** represents an aggregated time series of provenance-tagged activity.
+A **PTagSeries** represents an aggregated time series of provenance-tagged activity.
 
-## Creating a Series (Python)
+## Structure
+```json
+{
+  "topic": "#Election2026",
+  "generated_at": "2026-02-07T00:00:00Z",
+  "interval": "5-minute",
+  "points": [...]
+}
 
-```python
-from ci.transparency.types import Series
+## Intervals
 
-series = Series(
-    topic="#Election2026",
-    generated_at="2026-02-07T00:00:00Z",
-    interval="5-minute",  # Default; also: "minute", "15-minute", "hour"
-    points=[]
-)
-```
+Choose based on topic volume:
 
-## Validating
+- minute: High-volume (≥100 posts/min)
+- 5-minute: Default, balanced (≥20 posts/min)
+- 15-minute: Medium volume (≥7 posts/min)
+- hour: Low volume or historical
 
-```python
-from pydantic import ValidationError
+## Validation
 
-try:
-    Series.model_validate(data)
-except ValidationError as e:
-    print("Invalid Series:", e)
-```
-
----
+Implementations must validate against the JSON Schema. See Types for language-specific libraries.

@@ -87,4 +87,4 @@ jobs:
           overwrite: true
 
       - name: Deploy. Build docs (sanity check)
-        run: uv run mkdocs build
+        run: uv run mkdocs build --strict

@@ -1,7 +1,7 @@
 # CONTRIBUTING.md
 
-This repo hosts the **Civic Transparency PTAG Spec** (schemas + OpenAPI) under the **MIT License**.
-Goals: clarity, privacy-by-design, low-friction collaboration.
+This repo hosts the **Civic Transparency PTag Spec** (schemas + OpenAPI) under the **MIT License**.
+Goals: clarity, privacy-by-design, easy collaboration.
 
 > tl;dr: Open an Issue/Discussion first for non-trivial changes, keep PRs small, and run the quick local checks.
 
@@ -78,6 +78,7 @@ uv run pre-commit install
 ## Validate Local Changes
 
 ```bash
+git pull
 uv run ruff check . --fix
 uv run ruff format .
 
@@ -114,10 +115,10 @@ Ensure:
 
 ## Release
 
-1. Update `CHANGELOG.md` with notable changes.
+1. Update `CHANGELOG.md` with notable changes (beginning and end).
 2. Update `src/ci/transparency/ptag/spec/schemas/ptag_api.openapi.yaml` with the coming version.
 3. Ensure all CI checks pass.
-4. Build & verify package locally.
+4. Build and verify package locally.
 5. Tag and push (setuptools_scm uses the tag).
 
 **Pre-release script:**
@@ -132,7 +133,7 @@ uv run check-jsonschema --schemafile https://json-schema.org/draft/2020-12/schem
 pre-commit run --all-files
 uv run pyright
 uv run pytest
-uv run mkdocs build
+uv run mkdocs build --strict
 uv build
 ```
 
