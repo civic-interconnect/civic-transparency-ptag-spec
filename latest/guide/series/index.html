@@ -26,7 +26,7 @@
     
     
       
-        <title>Series - Draft Civic Transparency PTag Schemas</title>
+        <title>PTagSeries - Draft Civic Transparency PTag Schemas</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#guide-series" class="md-skip">
+        <a href="#guide-ptagseries" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Series
+              PTagSeries
             
           </span>
         </div>
@@ -468,7 +468,7 @@
   
   
   <span class="md-ellipsis">
-    Provenance Tag (Schema)
+    PTag (Schema)
     
   </span>
   
@@ -491,7 +491,7 @@
   
   
   <span class="md-ellipsis">
-    Series (Schema)
+    PTagSeries (Schema)
     
   </span>
   
@@ -514,7 +514,7 @@
   
   
   <span class="md-ellipsis">
-    Transparency API
+    PTag API
     
   </span>
   
@@ -600,7 +600,7 @@
   
   
   <span class="md-ellipsis">
-    Series
+    PTagSeries
     
   </span>
   
@@ -613,7 +613,7 @@
   
   
   <span class="md-ellipsis">
-    Series
+    PTagSeries
     
   </span>
   
@@ -636,18 +636,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creating-a-series-python" class="md-nav__link">
+  <a href="#structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating a Series (Python)
+      Structure
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#validating" class="md-nav__link">
+  <a href="#intervals" class="md-nav__link">
     <span class="md-ellipsis">
-      Validating
+      Intervals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
     </span>
   </a>
   
@@ -810,18 +819,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creating-a-series-python" class="md-nav__link">
+  <a href="#structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating a Series (Python)
+      Structure
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#validating" class="md-nav__link">
+  <a href="#intervals" class="md-nav__link">
     <span class="md-ellipsis">
-      Validating
+      Intervals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
     </span>
   </a>
   
@@ -846,29 +864,26 @@
   
 
 
-<h1 id="guide-series">Guide: Series</h1>
-<p>A <strong>SeriesDoc</strong> represents an aggregated time series of provenance-tagged activity.</p>
-<h2 id="creating-a-series-python">Creating a Series (Python)</h2>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ci.transparency.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Series</span>
-
-<span class="n">series</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span>
-    <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;#Election2026&quot;</span><span class="p">,</span>
-    <span class="n">generated_at</span><span class="o">=</span><span class="s2">&quot;2026-02-07T00:00:00Z&quot;</span><span class="p">,</span>
-    <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;5-minute&quot;</span><span class="p">,</span>  <span class="c1"># Default; also: &quot;minute&quot;, &quot;15-minute&quot;, &quot;hour&quot;</span>
-    <span class="n">points</span><span class="o">=</span><span class="p">[]</span>
-<span class="p">)</span>
-</code></pre></div>
-
-<h2 id="validating">Validating</h2>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">Series</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid Series:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-</code></pre></div>
-
-<hr />
+<h1 id="guide-ptagseries">Guide: PTagSeries</h1>
+<p>A <strong>PTagSeries</strong> represents an aggregated time series of provenance-tagged activity.</p>
+<h2 id="structure">Structure</h2>
+<p>```json
+{
+  "topic": "#Election2026",
+  "generated_at": "2026-02-07T00:00:00Z",
+  "interval": "5-minute",
+  "points": [...]
+}</p>
+<h2 id="intervals">Intervals</h2>
+<p>Choose based on topic volume:</p>
+<ul>
+<li>minute: High-volume (≥100 posts/min)</li>
+<li>5-minute: Default, balanced (≥20 posts/min)</li>
+<li>15-minute: Medium volume (≥7 posts/min)</li>
+<li>hour: Low volume or historical</li>
+</ul>
+<h2 id="validation">Validation</h2>
+<p>Implementations must validate against the JSON Schema. See Types for language-specific libraries.</p>
 
 
 
@@ -889,7 +904,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 1, 2025 19:57:49 UTC">2025-10-01</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 2, 2025 10:52:56 UTC">2025-10-02</span>
   </span>
 
     
