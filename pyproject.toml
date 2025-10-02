@@ -14,12 +14,13 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Topic :: Software Development :: Libraries",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Documentation",
 ]
 dependencies = [] # zero-deps
 description = "Civic Transparency PTag specification schemas"
 dynamic = ["version"]
-keywords = ["civic", "transparency", "ptag", "jsonschema", "specification"]
+keywords = ["civic", "transparency", "ptag", "jsonschema", "openapi", "specification"]
 license = "MIT"
 name = "civic-transparency-ptag-spec"
 readme = "README.md"

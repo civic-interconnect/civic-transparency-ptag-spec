@@ -15,6 +15,14 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [0.2.4] - 2025-10-02
+
+### Changed
+- **PTag:** Changed title to PTag from Provenance Tag (PTag)
+- **PyPi metadata:** Updated categories
+
+---
+
 ## [0.2.3] - 2025-10-02
 
 ### Changed
@@ -78,7 +86,8 @@ and this project adheres to **[Semantic Versioning](https://semver.org/spec/v2.0
 - Versions are driven by git tags via `setuptools_scm`. Tag `vX.Y.Z` to release.
 - Docs are deployed per version tag and aliased to **latest**.
 
-[Unreleased]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/civic-interconnect/civic-transparency-ptag-spec/compare/v0.2.0...v0.2.1

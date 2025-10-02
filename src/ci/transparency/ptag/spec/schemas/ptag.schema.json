@@ -2,7 +2,7 @@
   "$id": "ptag.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-canonical": "https://civic-interconnect.github.io/civic-transparency-ptag-spec/en/spec/schemas/ptag.schema.json",
-  "title": "Provenance Tag (PTag)",
+  "title": "PTag",
   "description": "Per-post provenance tags. Values are bucketed/categorical-no PII or direct identifiers.",
   "$defs": {
     "AcctAge": {
